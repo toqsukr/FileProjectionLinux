@@ -1,9 +1,10 @@
 //
-// Created by wastard on 11/16/23.
+// Created by wastard on 11/17/23.
 //
 
-#ifndef FILEPROJECTIONLINUX_FILE_H
-#define FILEPROJECTIONLINUX_FILE_H
+#ifndef CLIENT_FILE_H
+#define CLIENT_FILE_H
+
 
 #include <iostream>
 #include <string>
@@ -16,11 +17,9 @@
 
 
 class File {
-    private: int descriptor = -1;
-    private: void *pointer = nullptr;
-    private: struct stat statistic {};
-
-    public: void *getPointer() {return pointer;}
+    protected: int descriptor = -1;
+    protected: void *pointer = nullptr;
+    protected: struct stat statistic {};
 
     public: void openFile() {
         std::string path = enterPath();
@@ -39,16 +38,6 @@ class File {
         if (pointer == MAP_FAILED) {
             perror("mmap");
             closeFile();
-        }
-    }
-
-    public: void writeData(const std::string& text) {
-        if (pointer != MAP_FAILED) {
-            std::cout << "File projected successful!" << std::endl;
-            std::memcpy(pointer, text.c_str(), text.size());
-            std::cout << "Data has been written to the memory-mapped file." << std::endl;
-        } else {
-            std::cerr << "File projecting error D:"  << std::endl;
         }
     }
 
@@ -74,4 +63,4 @@ class File {
 };
 
 
-#endif //FILEPROJECTIONLINUX_FILE_H
+#endif //CLIENT_FILE_H

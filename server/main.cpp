@@ -1,12 +1,12 @@
 #include <iostream>
-#include "File.h"
+#include "WriteProjectFile.h"
+#include "WriteProjectFile.h"
 
 int main() {
-    File *file = new File();
+    auto file = new WriteProjectFile();
     file->openFile();
     file->projectFile();
     file->writeData("Projection test");
-    std::cout << "File address: " << file->getPointer() << std::endl;
     getchar();
     file->unprojectFile();
     file->closeFile();
