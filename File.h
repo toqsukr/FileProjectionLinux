@@ -21,7 +21,20 @@ class File {
     protected: void *pointer = nullptr;
     protected: struct stat statistic {};
 
-    public: void openFile() {
+    public: File()=default;
+
+    private: virtual void makeOperation() = 0;
+
+    public: void start() {
+        openFile();
+        projectFile();
+        makeOperation();
+        getchar();
+        unprojectFile();
+        closeFile();
+    }
+
+    private: void openFile() {
         std::string path = enterPath();
         descriptor = open(path.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
         if(descriptor < 0) {
@@ -33,7 +46,7 @@ class File {
         }
     }
 
-    public: void projectFile() {
+    private: void projectFile() {
         pointer = mmap(nullptr, statistic.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, descriptor, 0);
         if (pointer == MAP_FAILED) {
             perror("mmap");
@@ -41,14 +54,14 @@ class File {
         }
     }
 
-    public: void unprojectFile() {
+    private: void unprojectFile() {
         if (munmap(pointer, statistic.st_size) == -1) {
             perror("munmap");
             closeFile();
         }
     }
 
-    public: void closeFile() {
+    private: void closeFile() {
         close(descriptor);
     }
 

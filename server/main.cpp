@@ -1,14 +1,7 @@
-#include <iostream>
-#include "WriteProjectFile.h"
 #include "WriteProjectFile.h"
 
 int main() {
-    auto file = new WriteProjectFile();
-    file->openFile();
-    file->projectFile();
-    file->writeData("Projection test");
-    getchar();
-    file->unprojectFile();
-    file->closeFile();
+    WriteProjectFile file;
+    file.start();
     return 0;
 }

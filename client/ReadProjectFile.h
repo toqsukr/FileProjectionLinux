@@ -9,7 +9,7 @@
 
 
 class ReadProjectFile: public File {
-    public: void readData() {
+    public: void makeOpertaion() {
 
     }
 };
