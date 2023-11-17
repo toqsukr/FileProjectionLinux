@@ -4,8 +4,10 @@
 int main() {
     File *file = new File();
     file->openFile();
-    std::cout << "File size: " << file->getStatistic().st_size << " bytes" << std::endl;
     file->projectFile();
+    file->writeData("Projection test");
+    std::cout << "File address: " << file->getPointer() << std::endl;
+    getchar();
     file->unprojectFile();
     file->closeFile();
     return 0;

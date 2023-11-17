@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <cstring>
 #include "util.h"
 
 
@@ -19,9 +20,7 @@ class File {
     private: void *pointer = nullptr;
     private: struct stat statistic {};
 
-    public: int getDescriptor() const {return  descriptor;}
-
-    public: struct stat getStatistic() {return statistic;}
+    public: void *getPointer() {return pointer;}
 
     public: void openFile() {
         std::string path = enterPath();
@@ -37,14 +36,27 @@ class File {
 
     public: void projectFile() {
         pointer = mmap(nullptr, statistic.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, descriptor, 0);
-        if(pointer) std::cout << "File projected successful!";
-        else    std::cout << "File projecting error D:" << std::endl;
+        if (pointer == MAP_FAILED) {
+            perror("mmap");
+            closeFile();
+        }
+    }
+
+    public: void writeData(const std::string& text) {
+        if (pointer != MAP_FAILED) {
+            std::cout << "File projected successful!" << std::endl;
+            std::memcpy(pointer, text.c_str(), text.size());
+            std::cout << "Data has been written to the memory-mapped file." << std::endl;
+        } else {
+            std::cerr << "File projecting error D:"  << std::endl;
+        }
     }
 
     public: void unprojectFile() {
-        munmap(pointer, statistic.st_size);
-        if(pointer) std::cout << "Memory released!";
-        else    std::cout << "Memory releasing error D:" << std::endl;
+        if (munmap(pointer, statistic.st_size) == -1) {
+            perror("munmap");
+            closeFile();
+        }
     }
 
     public: void closeFile() {
