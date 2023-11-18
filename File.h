@@ -20,6 +20,7 @@ class File {
     protected: int descriptor = -1;
     protected: void *pointer = nullptr;
     protected: struct stat statistic {};
+    private: std::string path;
     private: const int FILESIZE = 4096;
 
     public: File()=default;
@@ -35,7 +36,7 @@ class File {
     }
 
     private: void openFile() {
-        std::string path = enterPath();
+        path = enterPath();
         descriptor = open(path.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
         if(descriptor < 0) {
             std::cout << "Incorrect path, try again!" << std::endl;
@@ -67,6 +68,7 @@ class File {
 
     private: void closeFile() {
         close(descriptor);
+        unlink(path.c_str());
     }
 
     public: static std::string enterPath() {
