@@ -15,14 +15,9 @@
 
 
 class ReadProjectFile: public File {
-    private: int serverPID = -1;
     private: void makeOperation() override {
         fd_set readFileDescriptorSet;
         struct timeval timeout{};
-
-        std::ifstream pid_file("../server_pid.txt");
-        pid_file >> serverPID;
-        pid_file.close();
 
         FD_ZERO(&readFileDescriptorSet);
         FD_SET(descriptor, &readFileDescriptorSet);
@@ -37,18 +32,16 @@ class ReadProjectFile: public File {
         } else {
             if (FD_ISSET(descriptor, &readFileDescriptorSet)) {
                 // Access allowed
-                char buffer[1024];
+                char buffer[4096];
 
                 ssize_t bytesRead = read(descriptor, buffer, sizeof(buffer));
                 if (bytesRead == -1) {
                     std::cerr << "File reading error\n";
                 }
 
-                std::cout << buffer << std::endl;
+                std::cout << "\nRead data:\n" << buffer << std::endl;
 
-                kill(serverPID, SIGUSR1);
-
-                std::cout << "File has been read\n";
+                std::cout << "\nFile has been read\n";
             }
         }
     }

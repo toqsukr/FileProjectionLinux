@@ -20,6 +20,7 @@ class File {
     protected: int descriptor = -1;
     protected: void *pointer = nullptr;
     protected: struct stat statistic {};
+    private: const int FILESIZE = 4096;
 
     public: File()=default;
 
@@ -46,7 +47,11 @@ class File {
     }
 
     private: void projectFile() {
-        pointer = mmap(nullptr, statistic.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, descriptor, 0);
+        if (ftruncate(descriptor, FILESIZE) == -1) {
+            perror("ftruncate");
+            exit(EXIT_FAILURE);
+        }
+        pointer = mmap(nullptr, FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED, descriptor, 0);
         if (pointer == MAP_FAILED) {
             perror("mmap");
             closeFile();
@@ -54,7 +59,7 @@ class File {
     }
 
     private: void unprojectFile() {
-        if (munmap(pointer, statistic.st_size) == -1) {
+        if (munmap(pointer, FILESIZE) == -1) {
             perror("munmap");
             closeFile();
         }
