@@ -29,7 +29,6 @@ class File {
         openFile();
         projectFile();
         makeOperation();
-        getchar();
         unprojectFile();
         closeFile();
     }
