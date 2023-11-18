@@ -20,24 +20,53 @@ class File {
     protected: int descriptor = -1;
     protected: void *pointer = nullptr;
     protected: struct stat statistic {};
-    private: std::string path;
+    protected: std::string path;
     private: const int FILESIZE = 4096;
 
     public: File()=default;
 
+    private: virtual int initDescriptor() = 0;
+
     private: virtual void makeOperation() = 0;
+
+    private: virtual void printOperation() = 0;
 
     public: void start() {
         openFile();
-        projectFile();
-        makeOperation();
+        int mode = printMenu();
+        while(mode) {
+            switch (mode) {
+                case 1:
+                    projectFile();
+                    break;
+                case 2:
+                    makeOperation();
+                    break;
+                default:
+                    std::cout << "Entered incorrect mode. Try again!" << std::endl;
+                    break;
+            }
+            mode = printMenu();
+            std::cout << mode << std::endl;
+        }
         unprojectFile();
         closeFile();
     }
 
+    private: int printMenu() {
+        int value;
+        std::cout << "\nProject file\t---->\t1" << std::endl;
+        printOperation();
+        std::cout << "Exit\t\t---->\t0" << std::endl;
+        std::cout << "\nEnter mode: ";
+        std::cin >> value;
+        return value;
+    }
+
+
     private: void openFile() {
         path = enterPath();
-        descriptor = open(path.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+        descriptor = initDescriptor();
         if(descriptor < 0) {
             std::cout << "Incorrect path, try again!" << std::endl;
             openFile();
@@ -48,15 +77,20 @@ class File {
     }
 
     private: void projectFile() {
-        if (ftruncate(descriptor, FILESIZE) == -1) {
-            perror("ftruncate");
-            exit(EXIT_FAILURE);
+        if(!pointer) {
+            if (ftruncate(descriptor, FILESIZE) == -1) {
+                perror("ftruncate");
+                exit(EXIT_FAILURE);
+            }
+            pointer = mmap(nullptr, FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED, descriptor, 0);
+            if (pointer == MAP_FAILED) {
+                perror("mmap");
+                closeFile();
+            }
+        } else {
+            std::cout << "The file has already project!" << std::endl;
         }
-        pointer = mmap(nullptr, FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED, descriptor, 0);
-        if (pointer == MAP_FAILED) {
-            perror("mmap");
-            closeFile();
-        }
+
     }
 
     private: void unprojectFile() {

@@ -15,6 +15,14 @@
 
 
 class ReadProjectFile: public File {
+    private: int initDescriptor() override {
+        return open(path.c_str(), O_RDWR, S_IRUSR | S_IWUSR);
+    }
+
+    private: void printOperation() override {
+        std::cout << "Read data\t---->\t2" << std::endl;
+    }
+
     private: void makeOperation() override {
         fd_set readFileDescriptorSet;
         struct timeval timeout{};
@@ -22,7 +30,7 @@ class ReadProjectFile: public File {
         FD_ZERO(&readFileDescriptorSet);
         FD_SET(descriptor, &readFileDescriptorSet);
 
-        timeout.tv_sec = 20;  // timeout (seconds)
+        timeout.tv_sec = 10;  // timeout (seconds)
 
         int ready = select(descriptor + 1, &readFileDescriptorSet, nullptr, nullptr, &timeout);
         if (ready == -1) {
@@ -32,14 +40,8 @@ class ReadProjectFile: public File {
         } else {
             if (FD_ISSET(descriptor, &readFileDescriptorSet)) {
                 // Access allowed
-                char buffer[4096];
 
-                ssize_t bytesRead = read(descriptor, buffer, sizeof(buffer));
-                if (bytesRead == -1) {
-                    std::cerr << "File reading error\n";
-                }
-
-                std::cout << "\nRead data:\n" << buffer << std::endl;
+                std::cout << "\nRead data:\n" << (char*)pointer << std::endl;
 
                 std::cout << "\nFile has been read\n";
             }
