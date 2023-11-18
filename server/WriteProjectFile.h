@@ -36,7 +36,7 @@ class WriteProjectFile: public File {
             std::memcpy(pointer, text.c_str(), text.size());
             std::cout << "Data has been written to the memory-mapped file." << std::endl;
         } else {
-            std::cout << "File projecting error D:"  << std::endl;
+            std::cout << "File is not projected!"  << std::endl;
         }
     }
 };
