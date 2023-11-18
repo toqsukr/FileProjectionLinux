@@ -21,7 +21,7 @@ class File {
     protected: void *pointer = nullptr;
     protected: struct stat statistic {};
     protected: std::string path;
-    private: const int FILESIZE = 4096;
+    protected: const int FILESIZE = 4096;
 
     public: File()=default;
 
@@ -46,8 +46,8 @@ class File {
                     std::cout << "Entered incorrect mode. Try again!" << std::endl;
                     break;
             }
+            redraw();
             mode = printMenu();
-            std::cout << mode << std::endl;
         }
         unprojectFile();
         closeFile();
@@ -55,7 +55,7 @@ class File {
 
     private: int printMenu() {
         int value;
-        std::cout << "\nProject file\t---->\t1" << std::endl;
+        std::cout << "Project file\t---->\t1" << std::endl;
         printOperation();
         std::cout << "Exit\t\t---->\t0" << std::endl;
         std::cout << "\nEnter mode: ";
@@ -77,7 +77,9 @@ class File {
     }
 
     private: void projectFile() {
+        redraw();
         if(!pointer) {
+            std::cout << "File projected successful!" << std::endl;
             if (ftruncate(descriptor, FILESIZE) == -1) {
                 perror("ftruncate");
                 exit(EXIT_FAILURE);
@@ -85,12 +87,10 @@ class File {
             pointer = mmap(nullptr, FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED, descriptor, 0);
             if (pointer == MAP_FAILED) {
                 perror("mmap");
-                closeFile();
             }
         } else {
             std::cout << "The file has already project!" << std::endl;
         }
-
     }
 
     private: void unprojectFile() {

@@ -26,4 +26,10 @@ std::string readConsole(const std::string& message = "\nEnter value: ") {
     return value;
 };
 
+void redraw() {
+    std::cout << "\nPress any key to continue...";
+    std::cin.get();
+    std::system("clear");
+}
+
 #endif //FILEPROJECTIONLINUX_UTIL_H

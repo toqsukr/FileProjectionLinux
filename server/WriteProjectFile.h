@@ -27,11 +27,12 @@ class WriteProjectFile: public File {
     }
 
     private: void makeOperation() override {
+        redraw();
+
         if (pointer && pointer != MAP_FAILED) {
             std::string text;
-            getchar();
-            text = readConsole("\nEnter text:");
-            std::cout << "\nFile projected successful!" << std::endl;
+            text = readConsole("Enter text:\n");
+            memset(pointer, 0, FILESIZE);
             std::memcpy(pointer, text.c_str(), text.size());
             std::cout << "Data has been written to the memory-mapped file." << std::endl;
         } else {

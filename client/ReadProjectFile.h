@@ -24,6 +24,8 @@ class ReadProjectFile: public File {
     }
 
     private: void makeOperation() override {
+        redraw();
+
         fd_set readFileDescriptorSet;
         struct timeval timeout{};
 
@@ -41,7 +43,7 @@ class ReadProjectFile: public File {
             if (FD_ISSET(descriptor, &readFileDescriptorSet)) {
                 // Access allowed
 
-                std::cout << "\nRead data:\n" << (char*)pointer << std::endl;
+                std::cout << "Read data:\n" << (char*)pointer << std::endl;
 
                 std::cout << "\nFile has been read\n";
             }
